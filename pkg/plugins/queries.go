@@ -52,14 +52,14 @@ func GetPluginSettings(orgId int64) (map[string]*models.PluginSettingInfoDTO, er
 	return pluginMap, nil
 }
 
-type enabledPlugins struct {
+type EnabledPlugins struct {
 	Panels      []*pluginmodels.PanelPlugin
 	DataSources map[string]*pluginmodels.DataSourcePlugin
 	Apps        []*pluginmodels.AppPlugin
 }
 
-func GetEnabledPlugins(orgID int64) (enabledPlugins, error) {
-	enabledPlugins := enabledPlugins{
+func GetEnabledPlugins(orgID int64) (*EnabledPlugins, error) {
+	enabledPlugins := &EnabledPlugins{
 		Panels:      make([]*pluginmodels.PanelPlugin, 0),
 		DataSources: make(map[string]*pluginmodels.DataSourcePlugin),
 		Apps:        make([]*pluginmodels.AppPlugin, 0),
