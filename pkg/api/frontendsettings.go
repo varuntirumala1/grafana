@@ -156,7 +156,7 @@ func (hs *HTTPServer) getFrontendSettingsMap(c *models.ReqContext) (map[string]i
 
 	panels := map[string]interface{}{}
 	for _, panel := range enabledPlugins.Panels {
-		if panel.State == plugins.PluginStateAlpha && !hs.Cfg.PluginsEnableAlpha {
+		if panel.State == pluginmodels.PluginStateAlpha && !hs.Cfg.PluginsEnableAlpha {
 			continue
 		}
 
