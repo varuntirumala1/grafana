@@ -15,7 +15,7 @@ import (
 	"github.com/grafana/grafana/pkg/models"
 	"github.com/grafana/grafana/pkg/plugins"
 	"github.com/grafana/grafana/pkg/plugins/backendplugin"
-	"github.com/grafana/grafana/pkg/plugins/datasource/wrapper"
+	"github.com/grafana/grafana/pkg/plugins/models/adapters"
 	"github.com/grafana/grafana/pkg/setting"
 	"github.com/grafana/grafana/pkg/util/errutil"
 )
@@ -53,7 +53,7 @@ func (hs *HTTPServer) getPluginContext(pluginID string, user *models.SignedInUse
 	return backend.PluginContext{
 		OrgID:    user.OrgId,
 		PluginID: plugin.Id,
-		User:     wrapper.BackendUserFromSignedInUser(user),
+		User:     adapters.BackendUserFromSignedInUser(user),
 		AppInstanceSettings: &backend.AppInstanceSettings{
 			JSONData:                jsonData,
 			DecryptedSecureJSONData: decryptedSecureJSONData,

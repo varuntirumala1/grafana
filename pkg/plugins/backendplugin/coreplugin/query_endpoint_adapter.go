@@ -7,7 +7,7 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana/pkg/infra/log"
 	"github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/plugins/datasource/wrapper"
+	"github.com/grafana/grafana/pkg/plugins/models/adapters"
 	"github.com/grafana/grafana/pkg/tsdb"
 )
 
@@ -55,7 +55,7 @@ func (a *queryEndpointAdapter) Query(ctx context.Context, ds *models.DataSource,
 		PluginContext: backend.PluginContext{
 			OrgID:                      ds.OrgId,
 			PluginID:                   a.pluginID,
-			User:                       wrapper.BackendUserFromSignedInUser(query.User),
+			User:                       adapters.BackendUserFromSignedInUser(query.User),
 			DataSourceInstanceSettings: instanceSettings,
 		},
 		Queries: []backend.DataQuery{},
