@@ -13,6 +13,7 @@ import (
 	"github.com/grafana/grafana/pkg/bus"
 	"github.com/grafana/grafana/pkg/infra/log"
 	"github.com/grafana/grafana/pkg/plugins"
+	pluginmodels "github.com/grafana/grafana/pkg/plugins/models"
 	"github.com/grafana/grafana/pkg/setting"
 )
 
@@ -110,12 +111,12 @@ func (hs *HTTPServer) getFSDataSources(c *models.ReqContext, enabledPlugins *man
 
 	// add data sources that are built in (meaning they are not added via data sources page, nor have any entry in
 	// the datasource table)
-	for _, ds := range plugins.DataSources {
+	for _, ds := range hs.PluginManager.DataSources {
 		if ds.BuiltIn {
 			dataSources[ds.Name] = map[string]interface{}{
 				"type": ds.Type,
 				"name": ds.Name,
-				"meta": plugins.DataSources[ds.Id],
+				"meta": hs.PluginManager.DataSources[ds.Id],
 			}
 		}
 	}
@@ -148,7 +149,7 @@ func (hs *HTTPServer) getFrontendSettingsMap(c *models.ReqContext) (map[string]i
 			defaultDS = n
 		}
 
-		meta := dsM["meta"].(*plugins.DataSourcePlugin)
+		meta := dsM["meta"].(*pluginmodels.DataSourcePlugin)
 		if meta.Preload {
 			pluginsToPreload = append(pluginsToPreload, meta.Module)
 		}

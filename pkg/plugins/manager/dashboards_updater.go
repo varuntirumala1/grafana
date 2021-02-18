@@ -21,7 +21,6 @@ func (pm *PluginManager) autoUpdateAppDashboard(pluginDashInfo *PluginDashboardI
 		User:      &models.SignedInUser{UserId: 0, OrgRole: models.ROLE_ADMIN},
 		Path:      pluginDashInfo.Path,
 	}
-
 	return bus.Dispatch(&updateCmd)
 }
 

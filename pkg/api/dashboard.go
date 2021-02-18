@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/services/alerting"
+	alertingerrors "github.com/grafana/grafana/pkg/services/alerting/errors"
 	"github.com/grafana/grafana/pkg/services/dashboards"
 
 	"github.com/grafana/grafana/pkg/api/dtos"
@@ -17,7 +17,6 @@ import (
 	"github.com/grafana/grafana/pkg/components/dashdiffs"
 	"github.com/grafana/grafana/pkg/components/simplejson"
 	"github.com/grafana/grafana/pkg/infra/metrics"
-	"github.com/grafana/grafana/pkg/plugins"
 	"github.com/grafana/grafana/pkg/services/guardian"
 	"github.com/grafana/grafana/pkg/util"
 )
@@ -226,7 +225,7 @@ func (hs *HTTPServer) deleteDashboard(c *models.ReqContext) response.Response {
 		}
 	}
 
-	err := hs.DashboardsService.DeleteDashboard(dash.Id, c.OrgId)
+	err := hs.dashboardService.DeleteDashboard(dash.Id, c.OrgId)
 	if err != nil {
 		var dashboardErr models.DashboardErr
 		if ok := errors.As(err, &dashboardErr); ok {
@@ -288,9 +287,9 @@ func (hs *HTTPServer) PostDashboard(c *models.ReqContext, cmd models.SaveDashboa
 		Overwrite: cmd.Overwrite,
 	}
 
-	dashboard, err := dashboards.NewService().SaveDashboard(dashItem, allowUiUpdate)
+	dashboard, err := dashboards.NewService(hs.TSDBService).SaveDashboard(dashItem, allowUiUpdate)
 	if err != nil {
-		return dashboardSaveErrorToApiResponse(err)
+		return hs.dashboardSaveErrorToApiResponse(err)
 	}
 
 	if hs.Cfg.EditorsCanAdmin && newDashboard {
@@ -331,7 +330,7 @@ func (hs *HTTPServer) PostDashboard(c *models.ReqContext, cmd models.SaveDashboa
 	})
 }
 
-func dashboardSaveErrorToApiResponse(err error) response.Response {
+func (hs *HTTPServer) dashboardSaveErrorToApiResponse(err error) response.Response {
 	var dashboardErr models.DashboardErr
 	if ok := errors.As(err, &dashboardErr); ok {
 		if body := dashboardErr.Body(); body != nil {
@@ -347,7 +346,7 @@ func dashboardSaveErrorToApiResponse(err error) response.Response {
 		return response.Error(400, err.Error(), nil)
 	}
 
-	var validationErr alerting.ValidationError
+	var validationErr alertingerrors.ValidationError
 	if ok := errors.As(err, &validationErr); ok {
 		return response.Error(422, validationErr.Error(), nil)
 	}
@@ -356,7 +355,7 @@ func dashboardSaveErrorToApiResponse(err error) response.Response {
 	if ok := errors.As(err, &pluginErr); ok {
 		message := fmt.Sprintf("The dashboard belongs to plugin %s.", pluginErr.PluginId)
 		// look up plugin name
-		if pluginDef, exist := plugins.Plugins[pluginErr.PluginId]; exist {
+		if pluginDef, exist := hs.PluginManager.Plugins[pluginErr.PluginId]; exist {
 			message = fmt.Sprintf("The dashboard belongs to plugin %s.", pluginDef.Name)
 		}
 		return response.JSON(412, util.DynMap{"status": "plugin-dashboard", "message": message})

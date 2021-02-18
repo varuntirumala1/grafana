@@ -10,6 +10,7 @@ import (
 	"github.com/grafana/grafana/pkg/bus"
 	"github.com/grafana/grafana/pkg/models"
 	"github.com/grafana/grafana/pkg/services/alerting"
+	alertingerrors "github.com/grafana/grafana/pkg/services/alerting/errors"
 	"github.com/grafana/grafana/pkg/services/guardian"
 	"github.com/grafana/grafana/pkg/services/search"
 	"github.com/grafana/grafana/pkg/util"
@@ -141,7 +142,7 @@ func AlertTest(c *models.ReqContext, dto dtos.AlertTestCommand) response.Respons
 	}
 
 	if err := bus.Dispatch(&backendCmd); err != nil {
-		var validationErr alerting.ValidationError
+		var validationErr alertingerrors.ValidationError
 		if errors.As(err, &validationErr) {
 			return response.Error(422, validationErr.Error(), nil)
 		}

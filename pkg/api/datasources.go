@@ -13,7 +13,6 @@ import (
 	"github.com/grafana/grafana/pkg/bus"
 	"github.com/grafana/grafana/pkg/infra/log"
 	"github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/plugins"
 	"github.com/grafana/grafana/pkg/plugins/models/adapters"
 	"github.com/grafana/grafana/pkg/util"
 )
@@ -46,7 +45,7 @@ func (hs *HTTPServer) GetDataSources(c *models.ReqContext) response.Response {
 			ReadOnly:  ds.ReadOnly,
 		}
 
-		if plugin, exists := plugins.DataSources[ds.Type]; exists {
+		if plugin, exists := hs.PluginManager.DataSources[ds.Type]; exists {
 			dsItem.TypeLogoUrl = plugin.Info.Logos.Small
 		} else {
 			dsItem.TypeLogoUrl = "public/img/icn-datasource.svg"
@@ -361,7 +360,7 @@ func (hs *HTTPServer) CallDatasourceResource(c *models.ReqContext) {
 	}
 
 	// find plugin
-	plugin, ok := plugins.DataSources[ds.Type]
+	plugin, ok := hs.PluginManager.DataSources[ds.Type]
 	if !ok {
 		c.JsonApiErr(500, "Unable to find datasource plugin", err)
 		return
@@ -431,12 +430,12 @@ func (hs *HTTPServer) CheckDatasourceHealth(c *models.ReqContext) response.Respo
 		return response.Error(500, "Unable to find datasource plugin", err)
 	}
 
-	dsInstanceSettings, err := wrapper.ModelToInstanceSettings(ds)
+	dsInstanceSettings, err := adapters.ModelToInstanceSettings(ds)
 	if err != nil {
 		return response.Error(500, "Unable to get datasource model", err)
 	}
 	pCtx := backend.PluginContext{
-		User:                       wrapper.BackendUserFromSignedInUser(c.SignedInUser),
+		User:                       adapters.BackendUserFromSignedInUser(c.SignedInUser),
 		OrgID:                      c.OrgId,
 		PluginID:                   plugin.Id,
 		DataSourceInstanceSettings: dsInstanceSettings,

@@ -13,6 +13,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/grafana/grafana/pkg/plugins/manager"
+	"github.com/grafana/grafana/pkg/services/dashboards"
 	"github.com/grafana/grafana/pkg/services/live"
 	"github.com/grafana/grafana/pkg/services/search"
 	"github.com/grafana/grafana/pkg/services/shorturls"
@@ -30,7 +32,6 @@ import (
 	"github.com/grafana/grafana/pkg/infra/remotecache"
 	"github.com/grafana/grafana/pkg/middleware"
 	"github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/plugins"
 	"github.com/grafana/grafana/pkg/registry"
 	"github.com/grafana/grafana/pkg/services/contexthandler"
 	"github.com/grafana/grafana/pkg/services/datasources"
@@ -77,7 +78,7 @@ type HTTPServer struct {
 	License                models.Licensing                   `inject:""`
 	BackendPluginManager   backendplugin.Manager              `inject:""`
 	PluginRequestValidator models.PluginRequestValidator      `inject:""`
-	PluginManager          *plugins.PluginManager             `inject:""`
+	PluginManager          *manager.PluginManager             `inject:""`
 	SearchService          *search.SearchService              `inject:""`
 	ShortURLService        *shorturls.ShortURLService         `inject:""`
 	Live                   *live.GrafanaLive                  `inject:""`
@@ -86,11 +87,14 @@ type HTTPServer struct {
 	LibraryPanelService    *librarypanels.LibraryPanelService `inject:""`
 	TSDBService            *tsdb.Service                      `inject:""`
 	Listener               net.Listener
+	dashboardService       dashboards.DashboardService
 }
 
 func (hs *HTTPServer) Init() error {
 	hs.log = log.New("http.server")
 
+	// TODO: Make this a DI service
+	hs.dashboardService = dashboards.NewService(hs.TSDBService)
 	hs.macaron = hs.newMacaron()
 	hs.registerRoutes()
 
@@ -314,7 +318,7 @@ func (hs *HTTPServer) addMiddlewaresAndStaticRoutes() {
 
 	m.Use(middleware.Recovery(hs.Cfg))
 
-	for _, route := range plugins.StaticRoutes {
+	for _, route := range hs.PluginManager.StaticRoutes {
 		pluginRoute := path.Join("/public/plugins/", route.PluginId)
 		hs.log.Debug("Plugins: Adding route", "route", pluginRoute, "dir", route.Directory)
 		hs.mapStatic(m, route.Directory, "", pluginRoute)

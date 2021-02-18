@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/grafana/grafana/pkg/infra/log"
+	"github.com/grafana/grafana/pkg/plugins/manager"
 	"github.com/grafana/grafana/pkg/registry"
 	"github.com/grafana/grafana/pkg/services/provisioning/dashboards"
 	"github.com/grafana/grafana/pkg/services/provisioning/datasources"
@@ -33,6 +34,7 @@ func init() {
 			datasources.Provision,
 			plugins.Provision,
 		),
+
 		InitPriority: registry.Low,
 	})
 }
@@ -41,7 +43,7 @@ func NewProvisioningServiceImpl(
 	newDashboardProvisioner dashboards.DashboardProvisionerFactory,
 	provisionNotifiers func(string) error,
 	provisionDatasources func(string) error,
-	provisionPlugins func(string) error,
+	provisionPlugins func(string, *manager.PluginManager) error,
 ) *provisioningServiceImpl {
 	return &provisioningServiceImpl{
 		log:                     log.New("provisioning"),
@@ -53,14 +55,15 @@ func NewProvisioningServiceImpl(
 }
 
 type provisioningServiceImpl struct {
-	Cfg                     *setting.Cfg `inject:""`
+	Cfg                     *setting.Cfg           `inject:""`
+	PluginManager           *manager.PluginManager `inject:""`
 	log                     log.Logger
 	pollingCtxCancel        context.CancelFunc
 	newDashboardProvisioner dashboards.DashboardProvisionerFactory
 	dashboardProvisioner    dashboards.DashboardProvisioner
 	provisionNotifiers      func(string) error
 	provisionDatasources    func(string) error
-	provisionPlugins        func(string) error
+	provisionPlugins        func(string, *manager.PluginManager) error
 	mutex                   sync.Mutex
 }
 
@@ -120,7 +123,7 @@ func (ps *provisioningServiceImpl) ProvisionDatasources() error {
 
 func (ps *provisioningServiceImpl) ProvisionPlugins() error {
 	appPath := filepath.Join(ps.Cfg.ProvisioningPath, "plugins")
-	err := ps.provisionPlugins(appPath)
+	err := ps.provisionPlugins(appPath, ps.PluginManager)
 	return errutil.Wrap("app provisioning error", err)
 }
 

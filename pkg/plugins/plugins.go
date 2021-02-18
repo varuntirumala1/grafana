@@ -13,7 +13,7 @@ const (
 
 type PluginState string
 
-var (
+const (
 	PluginStateAlpha PluginState = "alpha"
 )
 
