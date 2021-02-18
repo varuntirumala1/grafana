@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/grafana/grafana/pkg/models"
+	"github.com/grafana/grafana/pkg/plugins"
 	pluginmodels "github.com/grafana/grafana/pkg/plugins/models"
 	"github.com/grafana/grafana/pkg/registry"
 	"github.com/grafana/grafana/pkg/setting"
@@ -64,7 +65,7 @@ func (s *Service) Init() error {
 
 func (s *Service) HandleRequest(ctx context.Context, ds *models.DataSource, query pluginmodels.TSDBQuery) (
 	pluginmodels.TSDBResponse, error) {
-	plugin := s.PluginManager.GetTSDBPlugin(ds.Type)
+	plugin := plugins.GetTSDBPlugin(ds.Type)
 	if plugin == nil {
 		factory, exists := s.registry[ds.Type]
 		if !exists {

@@ -46,9 +46,8 @@ func (s *Service) NewExecutor(dsInfo *models.DataSource) (pluginmodels.TSDBPlugi
 	}
 
 	return &AzureMonitorExecutor{
-		httpClient:    httpClient,
-		dsInfo:        dsInfo,
-		pluginManager: s.PluginManager,
+		httpClient: httpClient,
+		dsInfo:     dsInfo,
 	}, nil
 }
 
@@ -83,27 +82,23 @@ func (e *AzureMonitorExecutor) TSDBQuery(ctx context.Context, dsInfo *models.Dat
 	}
 
 	azDatasource := &AzureMonitorDatasource{
-		httpClient:    e.httpClient,
-		dsInfo:        e.dsInfo,
-		pluginManager: e.pluginManager,
+		httpClient: e.httpClient,
+		dsInfo:     e.dsInfo,
 	}
 
 	aiDatasource := &ApplicationInsightsDatasource{
-		httpClient:    e.httpClient,
-		dsInfo:        e.dsInfo,
-		pluginManager: e.pluginManager,
+		httpClient: e.httpClient,
+		dsInfo:     e.dsInfo,
 	}
 
 	alaDatasource := &AzureLogAnalyticsDatasource{
-		httpClient:    e.httpClient,
-		dsInfo:        e.dsInfo,
-		pluginManager: e.pluginManager,
+		httpClient: e.httpClient,
+		dsInfo:     e.dsInfo,
 	}
 
 	iaDatasource := &InsightsAnalyticsDatasource{
-		httpClient:    e.httpClient,
-		dsInfo:        e.dsInfo,
-		pluginManager: e.pluginManager,
+		httpClient: e.httpClient,
+		dsInfo:     e.dsInfo,
 	}
 
 	azResult, err := azDatasource.executeTimeSeriesQuery(ctx, azureMonitorQueries, *tsdbQuery.TimeRange)

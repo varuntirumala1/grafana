@@ -16,6 +16,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/grafana/grafana/pkg/plugins"
 	"github.com/grafana/grafana/pkg/registry"
 
 	"github.com/grafana/grafana-plugin-sdk-go/data"
@@ -92,9 +93,8 @@ func (s *Service) NewExecutor(dsInfo *models.DataSource) (pluginmodels.TSDBPlugi
 	}
 
 	return &Executor{
-		httpClient:    httpClient,
-		dsInfo:        dsInfo,
-		pluginManager: s.PluginManager,
+		httpClient: httpClient,
+		dsInfo:     dsInfo,
 	}, nil
 }
 
@@ -528,7 +528,7 @@ func (e *Executor) createRequest(ctx context.Context, dsInfo *models.DataSource,
 	req.Header.Set("User-Agent", fmt.Sprintf("Grafana/%s", setting.BuildVersion))
 
 	// find plugin
-	plugin, ok := e.pluginManager.DataSources[dsInfo.Type]
+	plugin, ok := plugins.DataSources[dsInfo.Type]
 	if !ok {
 		return nil, errors.New("unable to find datasource plugin CloudMonitoring")
 	}
