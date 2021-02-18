@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/plugins"
 	"github.com/grafana/grafana/pkg/plugins/backendplugin"
 )
 
@@ -46,28 +45,28 @@ type PluginLoader interface {
 
 // PluginBase is the base plugin type.
 type PluginBase struct {
-	Type         string                        `json:"type"`
-	Name         string                        `json:"name"`
-	Id           string                        `json:"id"`
-	Info         PluginInfo                    `json:"info"`
-	Dependencies PluginDependencies            `json:"dependencies"`
-	Includes     []*PluginInclude              `json:"includes"`
-	Module       string                        `json:"module"`
-	BaseUrl      string                        `json:"baseUrl"`
-	Category     string                        `json:"category"`
-	HideFromList bool                          `json:"hideFromList,omitempty"`
-	Preload      bool                          `json:"preload"`
-	State        plugins.PluginState           `json:"state,omitempty"`
-	Signature    plugins.PluginSignatureStatus `json:"signature"`
-	Backend      bool                          `json:"backend"`
+	Type         string                `json:"type"`
+	Name         string                `json:"name"`
+	Id           string                `json:"id"`
+	Info         PluginInfo            `json:"info"`
+	Dependencies PluginDependencies    `json:"dependencies"`
+	Includes     []*PluginInclude      `json:"includes"`
+	Module       string                `json:"module"`
+	BaseUrl      string                `json:"baseUrl"`
+	Category     string                `json:"category"`
+	HideFromList bool                  `json:"hideFromList,omitempty"`
+	Preload      bool                  `json:"preload"`
+	State        PluginState           `json:"state,omitempty"`
+	Signature    PluginSignatureStatus `json:"signature"`
+	Backend      bool                  `json:"backend"`
 
-	IncludedInAppId string                      `json:"-"`
-	PluginDir       string                      `json:"-"`
-	DefaultNavUrl   string                      `json:"-"`
-	IsCorePlugin    bool                        `json:"-"`
-	Files           []string                    `json:"-"`
-	SignatureType   plugins.PluginSignatureType `json:"-"`
-	SignatureOrg    string                      `json:"-"`
+	IncludedInAppId string              `json:"-"`
+	PluginDir       string              `json:"-"`
+	DefaultNavUrl   string              `json:"-"`
+	IsCorePlugin    bool                `json:"-"`
+	Files           []string            `json:"-"`
+	SignatureType   PluginSignatureType `json:"-"`
+	SignatureOrg    string              `json:"-"`
 
 	GrafanaNetVersion   string `json:"-"`
 	GrafanaNetHasUpdate bool   `json:"-"`
