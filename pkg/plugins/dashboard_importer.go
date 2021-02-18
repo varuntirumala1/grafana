@@ -45,7 +45,7 @@ func ImportDashboard(cmd ImportDashboardCommand, requestHandler tsdbifaces.Reque
 	var dashboard *models.Dashboard
 	if cmd.PluginId != "" {
 		var err error
-		if dashboard, err = pm.loadPluginDashboard(cmd.PluginId, cmd.Path); err != nil {
+		if dashboard, err = loadPluginDashboard(cmd.PluginId, cmd.Path); err != nil {
 			return err
 		}
 	} else {

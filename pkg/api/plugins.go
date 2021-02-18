@@ -243,7 +243,7 @@ func GetPluginMarkdown(c *models.ReqContext) response.Response {
 	return resp
 }
 
-func ImportDashboard(c *models.ReqContext, apiCmd dtos.ImportDashboardCommand) response.Response {
+func (hs *HTTPServer) ImportDashboard(c *models.ReqContext, apiCmd dtos.ImportDashboardCommand) response.Response {
 	if apiCmd.PluginId == "" && apiCmd.Dashboard == nil {
 		return response.Error(422, "Dashboard must be set", nil)
 	}
@@ -258,8 +258,7 @@ func ImportDashboard(c *models.ReqContext, apiCmd dtos.ImportDashboardCommand) r
 		FolderId:  apiCmd.FolderId,
 		Dashboard: apiCmd.Dashboard,
 	}
-
-	if err := bus.Dispatch(&cmd); err != nil {
+	if err := plugins.ImportDashboard(cmd, hs.TSDBService); err != nil {
 		return dashboardSaveErrorToApiResponse(err)
 	}
 

@@ -7,18 +7,18 @@ import (
 )
 
 type PluginSetting struct {
-	Name          string                      `json:"name"`
-	Type          string                      `json:"type"`
-	Id            string                      `json:"id"`
-	Enabled       bool                        `json:"enabled"`
-	Pinned        bool                        `json:"pinned"`
-	Module        string                      `json:"module"`
-	BaseUrl       string                      `json:"baseUrl"`
-	Info          *plugins.PluginInfo         `json:"info"`
-	Includes      []*plugins.PluginInclude    `json:"includes"`
-	Dependencies  *plugins.PluginDependencies `json:"dependencies"`
-	JsonData      map[string]interface{}      `json:"jsonData"`
-	DefaultNavUrl string                      `json:"defaultNavUrl"`
+	Name          string                           `json:"name"`
+	Type          string                           `json:"type"`
+	Id            string                           `json:"id"`
+	Enabled       bool                             `json:"enabled"`
+	Pinned        bool                             `json:"pinned"`
+	Module        string                           `json:"module"`
+	BaseUrl       string                           `json:"baseUrl"`
+	Info          *pluginmodels.PluginInfo         `json:"info"`
+	Includes      []*pluginmodels.PluginInclude    `json:"includes"`
+	Dependencies  *pluginmodels.PluginDependencies `json:"dependencies"`
+	JsonData      map[string]interface{}           `json:"jsonData"`
+	DefaultNavUrl string                           `json:"defaultNavUrl"`
 
 	LatestVersion string                             `json:"latestVersion"`
 	HasUpdate     bool                               `json:"hasUpdate"`
@@ -34,7 +34,7 @@ type PluginListItem struct {
 	Id            string                             `json:"id"`
 	Enabled       bool                               `json:"enabled"`
 	Pinned        bool                               `json:"pinned"`
-	Info          *plugins.PluginInfo                `json:"info"`
+	Info          *pluginmodels.PluginInfo           `json:"info"`
 	LatestVersion string                             `json:"latestVersion"`
 	HasUpdate     bool                               `json:"hasUpdate"`
 	DefaultNavUrl string                             `json:"defaultNavUrl"`

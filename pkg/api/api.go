@@ -315,7 +315,7 @@ func (hs *HTTPServer) registerRoutes() {
 			dashboardRoute.Post("/db", bind(models.SaveDashboardCommand{}), routing.Wrap(hs.PostDashboard))
 			dashboardRoute.Get("/home", routing.Wrap(hs.GetHomeDashboard))
 			dashboardRoute.Get("/tags", GetDashboardTags)
-			dashboardRoute.Post("/import", bind(dtos.ImportDashboardCommand{}), routing.Wrap(ImportDashboard))
+			dashboardRoute.Post("/import", bind(dtos.ImportDashboardCommand{}), routing.Wrap(hs.ImportDashboard))
 
 			dashboardRoute.Group("/id/:dashboardId", func(dashIdRoute routing.RouteRegister) {
 				dashIdRoute.Get("/versions", routing.Wrap(GetDashboardVersions))
