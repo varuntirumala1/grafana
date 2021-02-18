@@ -57,11 +57,12 @@ type JwtTokenAuth struct {
 	Params map[string]string `json:"params"`
 }
 
-func (app *AppPlugin) Loadd(decoder *json.Decoder, base *PluginBase, backendPluginManager backendplugin.Manager) error {
+func (app *AppPlugin) Load(decoder *json.Decoder, base *PluginBase, backendPluginManager backendplugin.Manager) error {
 	if err := decoder.Decode(app); err != nil {
 		return err
 	}
 
+	// TODO: Enable
 	/*
 		if err := app.registerPlugin(base); err != nil {
 			return err
@@ -77,6 +78,7 @@ func (app *AppPlugin) Loadd(decoder *json.Decoder, base *PluginBase, backendPlug
 		}
 	}
 
+	// TODO: Fix
 	/*
 		Apps[app.Id] = app
 	*/
@@ -86,6 +88,7 @@ func (app *AppPlugin) Loadd(decoder *json.Decoder, base *PluginBase, backendPlug
 func (app *AppPlugin) InitApp() {
 	app.InitFrontendPlugin()
 
+	// TODO: Fix
 	/*
 			// check if we have child panels
 			for _, panel := range Panels {

@@ -26,8 +26,9 @@ type PluginDashboardInfoDTO struct {
 	Removed          bool   `json:"removed"`
 }
 
-func (pm *PluginManager) GetPluginDashboards(orgId int64, pluginId string) ([]*PluginDashboardInfoDTO, error) {
-	plugin, exists := pm.Plugins[pluginId]
+func GetPluginDashboards(orgId int64, pluginId string) ([]*PluginDashboardInfoDTO, error) {
+	plugin, exists := Plugins[pluginId]
+
 	if !exists {
 		return nil, pluginmodels.PluginNotFoundError{pluginId}
 	}
@@ -46,7 +47,7 @@ func (pm *PluginManager) GetPluginDashboards(orgId int64, pluginId string) ([]*P
 			continue
 		}
 
-		dashboard, err := pm.loadPluginDashboard(plugin.Id, include.Path)
+		dashboard, err := loadPluginDashboard(plugin.Id, include.Path)
 		if err != nil {
 			return nil, err
 		}
@@ -86,8 +87,8 @@ func (pm *PluginManager) GetPluginDashboards(orgId int64, pluginId string) ([]*P
 	return result, nil
 }
 
-func (pm *PluginManager) loadPluginDashboard(pluginId, path string) (*models.Dashboard, error) {
-	plugin, exists := pm.Plugins[pluginId]
+func loadPluginDashboard(pluginId, path string) (*models.Dashboard, error) {
+	plugin, exists := Plugins[pluginId]
 	if !exists {
 		return nil, pluginmodels.PluginNotFoundError{pluginId}
 	}
@@ -104,7 +105,7 @@ func (pm *PluginManager) loadPluginDashboard(pluginId, path string) (*models.Das
 
 	defer func() {
 		if err := reader.Close(); err != nil {
-			pm.log.Warn("Failed to close file", "path", dashboardFilePath, "err", err)
+			plog.Warn("Failed to close file", "path", dashboardFilePath, "err", err)
 		}
 	}()
 

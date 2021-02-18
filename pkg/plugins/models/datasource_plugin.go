@@ -43,6 +43,7 @@ func (p *DataSourcePlugin) Load(decoder *json.Decoder, base *PluginBase, backend
 		return errutil.Wrapf(err, "Failed to decode datasource plugin")
 	}
 
+	// TODO: Enable
 	/*
 		if err := p.registerPlugin(base); err != nil {
 			return errutil.Wrapf(err, "Failed to register plugin")
@@ -61,7 +62,7 @@ func (p *DataSourcePlugin) Load(decoder *json.Decoder, base *PluginBase, backend
 		}
 	}
 
-	//p.Manager.DataSources[p.Id] = p
+	DataSources[p.Id] = p
 	return nil
 }
 

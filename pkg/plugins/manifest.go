@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/grafana/grafana/pkg/infra/log"
+	pluginmodels "github.com/grafana/grafana/pkg/plugins/models"
 	"github.com/grafana/grafana/pkg/setting"
 	"github.com/grafana/grafana/pkg/util/errutil"
 
@@ -56,11 +57,11 @@ type pluginManifest struct {
 	Files   map[string]string `json:"files"`
 
 	// V2 supported fields
-	ManifestVersion string              `json:"manifestVersion"`
-	SignatureType   PluginSignatureType `json:"signatureType"`
-	SignedByOrg     string              `json:"signedByOrg"`
-	SignedByOrgName string              `json:"signedByOrgName"`
-	RootURLs        []string            `json:"rootUrls"`
+	ManifestVersion string                           `json:"manifestVersion"`
+	SignatureType   pluginmodels.PluginSignatureType `json:"signatureType"`
+	SignedByOrg     string                           `json:"signedByOrg"`
+	SignedByOrgName string                           `json:"signedByOrgName"`
+	RootURLs        []string                         `json:"rootUrls"`
 }
 
 func (m *pluginManifest) isV2() bool {

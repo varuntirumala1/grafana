@@ -6,14 +6,13 @@ import (
 	"github.com/grafana/grafana/pkg/bus"
 	"github.com/grafana/grafana/pkg/components/simplejson"
 	"github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/plugins/manager"
 	"github.com/grafana/grafana/pkg/setting"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestPluginDashboards(t *testing.T) {
 	Convey("When asking for plugin dashboard info", t, func() {
-		pm := &manager.PluginManager{
+		pm := &PluginManager{
 			Cfg: &setting.Cfg{
 				FeatureToggles: map[string]bool{},
 				PluginSettings: setting.PluginSettings{

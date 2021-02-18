@@ -74,7 +74,6 @@ type PluginBase struct {
 	Root *PluginBase
 }
 
-/*
 func (pb *PluginBase) registerPlugin(base *PluginBase) error {
 	if p, exists := Plugins[pb.Id]; exists {
 		return DuplicatePluginError{Plugin: pb, ExistingPlugin: p}
@@ -107,7 +106,6 @@ func (pb *PluginBase) registerPlugin(base *PluginBase) error {
 	Plugins[pb.Id] = pb
 	return nil
 }
-*/
 
 type PluginDependencies struct {
 	GrafanaVersion string                 `json:"grafanaVersion"`
