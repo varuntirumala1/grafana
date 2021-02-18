@@ -47,7 +47,7 @@ func GetPluginDashboards(orgId int64, pluginId string) ([]*PluginDashboardInfoDT
 			continue
 		}
 
-		dashboard, err := loadPluginDashboard(plugin.Id, include.Path)
+		dashboard, err := LoadPluginDashboard(plugin.Id, include.Path)
 		if err != nil {
 			return nil, err
 		}
@@ -87,7 +87,7 @@ func GetPluginDashboards(orgId int64, pluginId string) ([]*PluginDashboardInfoDT
 	return result, nil
 }
 
-func loadPluginDashboard(pluginId, path string) (*models.Dashboard, error) {
+func LoadPluginDashboard(pluginId, path string) (*models.Dashboard, error) {
 	plugin, exists := Plugins[pluginId]
 	if !exists {
 		return nil, pluginmodels.PluginNotFoundError{pluginId}

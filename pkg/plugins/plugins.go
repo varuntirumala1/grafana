@@ -156,7 +156,6 @@ func (pm *PluginManager) Init() error {
 }
 
 func (pm *PluginManager) Run(ctx context.Context) error {
-	pm.updateAppDashboards()
 	pm.checkForUpdates()
 
 	ticker := time.NewTicker(time.Minute * 10)
