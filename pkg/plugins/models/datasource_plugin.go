@@ -81,6 +81,7 @@ func (p *DataSourcePlugin) TSDBQuery(ctx context.Context, dsInfo *models.DataSou
 func (p *DataSourcePlugin) onLegacyPluginStart(pluginID string, client *grpcplugin.LegacyClient, logger log.Logger) error {
 	p.legacyClient = client
 	p.logger = logger
+	// TODO
 	/*
 		tsdb.RegisterTsdbQueryEndpoint(pluginID, func(dsInfo *models.DataSource) (tsdb.TsdbQueryEndpoint, error) {
 			return wrapper.NewDatasourcePluginWrapper(logger, client.DatasourcePlugin), nil
@@ -97,6 +98,7 @@ func (p *DataSourcePlugin) onPluginStart(pluginID string, client *grpcplugin.Cli
 
 	p.client = client
 	p.logger = logger
+	// TODO
 	/*
 		if client.DataPlugin != nil {
 			tsdb.RegisterTsdbQueryEndpoint(pluginID, func(dsInfo *models.DataSource) (tsdb.TsdbQueryEndpoint, error) {

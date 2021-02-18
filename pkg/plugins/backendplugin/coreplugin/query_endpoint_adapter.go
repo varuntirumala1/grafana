@@ -7,11 +7,11 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana/pkg/infra/log"
 	"github.com/grafana/grafana/pkg/models"
+	pluginmodels "github.com/grafana/grafana/pkg/plugins/models"
 	"github.com/grafana/grafana/pkg/plugins/models/adapters"
-	"github.com/grafana/grafana/pkg/tsdb"
 )
 
-func newQueryEndpointAdapter(pluginID string, logger log.Logger, handler backend.QueryDataHandler) tsdb.TsdbQueryEndpoint {
+func newQueryEndpointAdapter(pluginID string, logger log.Logger, handler backend.QueryDataHandler) pluginmodels.TSDBPlugin {
 	return &queryEndpointAdapter{
 		pluginID: pluginID,
 		logger:   logger,
@@ -45,10 +45,11 @@ func modelToInstanceSettings(ds *models.DataSource) (*backend.DataSourceInstance
 	}, nil
 }
 
-func (a *queryEndpointAdapter) Query(ctx context.Context, ds *models.DataSource, query *tsdb.TsdbQuery) (*tsdb.Response, error) {
+func (a *queryEndpointAdapter) TSDBQuery(ctx context.Context, ds *models.DataSource, query pluginmodels.TSDBQuery) (
+	pluginmodels.TSDBResponse, error) {
 	instanceSettings, err := modelToInstanceSettings(ds)
 	if err != nil {
-		return nil, err
+		return pluginmodels.TSDBResponse{}, err
 	}
 
 	req := &backend.QueryDataRequest{
@@ -65,11 +66,11 @@ func (a *queryEndpointAdapter) Query(ctx context.Context, ds *models.DataSource,
 	for _, q := range query.Queries {
 		modelJSON, err := q.Model.MarshalJSON()
 		if err != nil {
-			return nil, err
+			return pluginmodels.TSDBResponse{}, err
 		}
 		req.Queries = append(req.Queries, backend.DataQuery{
-			RefID:         q.RefId,
-			Interval:      time.Duration(q.IntervalMs) * time.Millisecond,
+			RefID:         q.RefID,
+			Interval:      time.Duration(q.IntervalMS) * time.Millisecond,
 			MaxDataPoints: q.MaxDataPoints,
 			TimeRange: backend.TimeRange{
 				From: query.TimeRange.GetFromAsTimeUTC(),
@@ -82,16 +83,16 @@ func (a *queryEndpointAdapter) Query(ctx context.Context, ds *models.DataSource,
 
 	resp, err := a.handler.QueryData(ctx, req)
 	if err != nil {
-		return nil, err
+		return pluginmodels.TSDBResponse{}, err
 	}
 
-	tR := &tsdb.Response{
-		Results: make(map[string]*tsdb.QueryResult, len(resp.Responses)),
+	tR := pluginmodels.TSDBResponse{
+		Results: make(map[string]pluginmodels.TSDBQueryResult, len(resp.Responses)),
 	}
 
 	for refID, r := range resp.Responses {
-		qr := &tsdb.QueryResult{
-			RefId: refID,
+		qr := pluginmodels.TSDBQueryResult{
+			RefID: refID,
 		}
 
 		for _, f := range r.Frames {
@@ -100,7 +101,7 @@ func (a *queryEndpointAdapter) Query(ctx context.Context, ds *models.DataSource,
 			}
 		}
 
-		qr.Dataframes = tsdb.NewDecodedDataFrames(r.Frames)
+		qr.Dataframes = pluginmodels.NewDecodedDataFrames(r.Frames)
 
 		if r.Error != nil {
 			qr.Error = r.Error

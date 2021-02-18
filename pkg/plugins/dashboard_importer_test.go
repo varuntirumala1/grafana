@@ -1,4 +1,4 @@
-package plugins
+package manager
 
 import (
 	"io/ioutil"
@@ -6,6 +6,7 @@ import (
 
 	"github.com/grafana/grafana/pkg/components/simplejson"
 	"github.com/grafana/grafana/pkg/models"
+	"github.com/grafana/grafana/pkg/plugins/manager"
 	"github.com/grafana/grafana/pkg/services/dashboards"
 	"github.com/grafana/grafana/pkg/setting"
 	. "github.com/smartystreets/goconvey/convey"
@@ -27,7 +28,7 @@ func TestDashboardImport(t *testing.T) {
 			},
 		}
 
-		err := ImportDashboard(&cmd)
+		err := ImportDashboard(cmd)
 		So(err, ShouldBeNil)
 
 		Convey("should install dashboard", func() {
@@ -85,7 +86,7 @@ func TestDashboardImport(t *testing.T) {
 
 func pluginScenario(desc string, t *testing.T, fn func()) {
 	Convey("Given a plugin", t, func() {
-		pm := &PluginManager{
+		pm := &manager.PluginManager{
 			Cfg: &setting.Cfg{
 				FeatureToggles: map[string]bool{},
 				PluginSettings: setting.PluginSettings{

@@ -5,9 +5,7 @@ import (
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana/pkg/infra/log"
-	"github.com/grafana/grafana/pkg/models"
 	"github.com/grafana/grafana/pkg/plugins/backendplugin"
-	"github.com/grafana/grafana/pkg/tsdb"
 )
 
 // corePlugin represents a plugin that's part of Grafana core.
@@ -42,9 +40,12 @@ func (cp *corePlugin) Logger() log.Logger {
 
 func (cp *corePlugin) Start(ctx context.Context) error {
 	if cp.QueryDataHandler != nil {
-		tsdb.RegisterTsdbQueryEndpoint(cp.pluginID, func(dsInfo *models.DataSource) (tsdb.TsdbQueryEndpoint, error) {
-			return newQueryEndpointAdapter(cp.pluginID, cp.logger, backendplugin.InstrumentQueryDataHandler(cp.QueryDataHandler)), nil
-		})
+		// TODO: Re-enable
+		/*
+			tsdb.RegisterTsdbQueryEndpoint(cp.pluginID, func(dsInfo *models.DataSource) (tsdb.TsdbQueryEndpoint, error) {
+				return newQueryEndpointAdapter(cp.pluginID, cp.logger, backendplugin.InstrumentQueryDataHandler(cp.QueryDataHandler)), nil
+			})
+		*/
 	}
 	return nil
 }
