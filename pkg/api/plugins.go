@@ -15,6 +15,7 @@ import (
 	"github.com/grafana/grafana/pkg/models"
 	"github.com/grafana/grafana/pkg/plugins"
 	"github.com/grafana/grafana/pkg/plugins/backendplugin"
+	pluginmodels "github.com/grafana/grafana/pkg/plugins/models"
 	"github.com/grafana/grafana/pkg/plugins/models/adapters"
 	"github.com/grafana/grafana/pkg/setting"
 	"github.com/grafana/grafana/pkg/util/errutil"
@@ -205,7 +206,7 @@ func GetPluginDashboards(c *models.ReqContext) response.Response {
 
 	list, err := plugins.GetPluginDashboards(c.OrgId, pluginID)
 	if err != nil {
-		var notFound plugins.PluginNotFoundError
+		var notFound pluginmodels.PluginNotFoundError
 		if errors.As(err, &notFound) {
 			return response.Error(404, notFound.Error(), nil)
 		}
@@ -222,7 +223,7 @@ func GetPluginMarkdown(c *models.ReqContext) response.Response {
 
 	content, err := plugins.GetPluginMarkdown(pluginID, name)
 	if err != nil {
-		var notFound plugins.PluginNotFoundError
+		var notFound pluginmodels.PluginNotFoundError
 		if errors.As(err, &notFound) {
 			return response.Error(404, notFound.Error(), nil)
 		}
