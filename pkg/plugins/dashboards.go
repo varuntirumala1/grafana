@@ -1,4 +1,4 @@
-package manager
+package plugins
 
 import (
 	"os"

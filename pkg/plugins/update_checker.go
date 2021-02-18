@@ -39,7 +39,7 @@ func getAllExternalPluginSlugs() string {
 	return strings.Join(result, ",")
 }
 
-func (pm *PluginManager) checkForUpdates() {
+func checkForUpdates() {
 	if !setting.CheckForUpdates {
 		return
 	}
