@@ -57,32 +57,22 @@ type JwtTokenAuth struct {
 	Params map[string]string `json:"params"`
 }
 
-func (app *AppPlugin) Load(decoder *json.Decoder, base *PluginBase, backendPluginManager backendplugin.Manager) error {
+func (app *AppPlugin) Load(decoder *json.Decoder, base *PluginBase, backendPluginManager backendplugin.Manager) (
+	interface{}, error) {
 	if err := decoder.Decode(app); err != nil {
-		return err
+		return nil, err
 	}
-
-	// TODO: Enable
-	/*
-		if err := app.registerPlugin(base); err != nil {
-			return err
-		}
-	*/
 
 	if app.Backend {
 		cmd := ComposePluginStartCommand(app.Executable)
 		fullpath := filepath.Join(app.PluginDir, cmd)
 		factory := grpcplugin.NewBackendPlugin(app.Id, fullpath, grpcplugin.PluginStartFuncs{})
 		if err := backendPluginManager.Register(app.Id, factory); err != nil {
-			return errutil.Wrapf(err, "failed to register backend plugin")
+			return nil, errutil.Wrapf(err, "failed to register backend plugin")
 		}
 	}
 
-	// TODO: Fix
-	/*
-		Apps[app.Id] = app
-	*/
-	return nil
+	return app, nil
 }
 
 func (app *AppPlugin) InitApp() {

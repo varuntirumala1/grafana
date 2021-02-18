@@ -3,6 +3,7 @@ package plugins
 import (
 	"github.com/grafana/grafana/pkg/bus"
 	"github.com/grafana/grafana/pkg/models"
+	pluginmodels "github.com/grafana/grafana/pkg/plugins/models"
 )
 
 func GetPluginSettings(orgId int64) (map[string]*models.PluginSettingInfoDTO, error) {
@@ -31,7 +32,7 @@ func GetPluginSettings(orgId int64) (map[string]*models.PluginSettingInfoDTO, er
 		}
 
 		// apps are disabled by default
-		if pluginDef.Type == PluginTypeApp {
+		if pluginDef.Type == pluginmodels.PluginTypeApp {
 			opt.Enabled = false
 		}
 

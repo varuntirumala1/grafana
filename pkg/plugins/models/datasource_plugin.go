@@ -38,17 +38,11 @@ type DataSourcePlugin struct {
 	logger       log.Logger
 }
 
-func (p *DataSourcePlugin) Load(decoder *json.Decoder, base *PluginBase, backendPluginManager backendplugin.Manager) error {
+func (p *DataSourcePlugin) Load(decoder *json.Decoder, base *PluginBase, backendPluginManager backendplugin.Manager) (
+	interface{}, error) {
 	if err := decoder.Decode(p); err != nil {
-		return errutil.Wrapf(err, "Failed to decode datasource plugin")
+		return nil, errutil.Wrapf(err, "Failed to decode datasource plugin")
 	}
-
-	// TODO: Enable
-	/*
-		if err := p.registerPlugin(base); err != nil {
-			return errutil.Wrapf(err, "Failed to register plugin")
-		}
-	*/
 
 	if p.Backend {
 		cmd := ComposePluginStartCommand(p.Executable)
@@ -58,12 +52,11 @@ func (p *DataSourcePlugin) Load(decoder *json.Decoder, base *PluginBase, backend
 			OnStart:       p.onPluginStart,
 		})
 		if err := backendPluginManager.Register(p.Id, factory); err != nil {
-			return errutil.Wrapf(err, "Failed to register backend plugin")
+			return nil, errutil.Wrapf(err, "failed to register backend plugin")
 		}
 	}
 
-	DataSources[p.Id] = p
-	return nil
+	return p, nil
 }
 
 func (p *DataSourcePlugin) TSDBQuery(ctx context.Context, dsInfo *models.DataSource, query TSDBQuery) (TSDBResponse, error) {

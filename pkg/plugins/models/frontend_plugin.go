@@ -16,10 +16,13 @@ type FrontendPluginBase struct {
 
 func (fp *FrontendPluginBase) InitFrontendPlugin() {
 	if isExternalPlugin(fp.PluginDir) {
-		StaticRoutes = append(StaticRoutes, &PluginStaticRoute{
-			Directory: fp.PluginDir,
-			PluginId:  fp.Id,
-		})
+		// TODO
+		/*
+			StaticRoutes = append(StaticRoutes, &PluginStaticRoute{
+				Directory: fp.PluginDir,
+				PluginId:  fp.Id,
+			})
+		*/
 	}
 
 	fp.handleModuleDefaults()
