@@ -52,39 +52,45 @@ func GetPluginSettings(orgId int64) (map[string]*models.PluginSettingInfoDTO, er
 	return pluginMap, nil
 }
 
-func GetEnabledPlugins(orgId int64) (*EnabledPlugins, error) {
-	enabledPlugins := NewEnabledPlugins()
-	pluginSettingMap, err := GetPluginSettings(orgId)
+type enabledPlugins struct {
+	Panels      []*pluginmodels.PanelPlugin
+	DataSources map[string]*pluginmodels.DataSourcePlugin
+	Apps        []*pluginmodels.AppPlugin
+}
+
+func GetEnabledPlugins(orgID int64) (enabledPlugins, error) {
+	enabledPlugins := enabledPlugins{
+		Panels:      make([]*pluginmodels.PanelPlugin, 0),
+		DataSources: make(map[string]*pluginmodels.DataSourcePlugin),
+		Apps:        make([]*pluginmodels.AppPlugin, 0),
+	}
+
+	pluginSettingMap, err := GetPluginSettings(orgID)
 	if err != nil {
-		return nil, err
+		return enabledPlugins, err
 	}
 
-	isPluginEnabled := func(pluginId string) bool {
-		_, ok := pluginSettingMap[pluginId]
-		return ok
-	}
-
-	for pluginId, app := range Apps {
-		if b, ok := pluginSettingMap[pluginId]; ok {
+	for pluginID, app := range Apps {
+		if b, ok := pluginSettingMap[pluginID]; ok {
 			app.Pinned = b.Pinned
 			enabledPlugins.Apps = append(enabledPlugins.Apps, app)
 		}
 	}
 
 	// add all plugins that are not part of an App.
-	for dsId, ds := range DataSources {
-		if isPluginEnabled(ds.Id) {
-			enabledPlugins.DataSources[dsId] = ds
+	for dsID, ds := range DataSources {
+		if _, exists := pluginSettingMap[ds.Id]; exists {
+			enabledPlugins.DataSources[dsID] = ds
 		}
 	}
 
 	for _, panel := range Panels {
-		if isPluginEnabled(panel.Id) {
+		if _, exists := pluginSettingMap[panel.Id]; exists {
 			enabledPlugins.Panels = append(enabledPlugins.Panels, panel)
 		}
 	}
 
-	return &enabledPlugins, nil
+	return enabledPlugins, nil
 }
 
 // IsAppInstalled checks if an app plugin with provided plugin ID is installed.
