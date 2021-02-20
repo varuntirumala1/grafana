@@ -1,2 +1,2 @@
 #!/bin/bash
-cloudflared --origincert /config/cert.pem --config /config/config.yml tunnel run logcollector
+cloudflared --origincert /data/cert.pem --config /data/config.yml tunnel run logcollector
