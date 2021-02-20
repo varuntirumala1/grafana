@@ -82,7 +82,7 @@ COPY --from=js-builder /usr/src/app/tools ./tools
 COPY supervisord.conf /etc/supervisord.conf
 COPY argo-tunnel.sh /usr/share/argo-tunnel.sh
 RUN chmod +x /usr/share/argo-tunnel.sh
-COPY README ./data
+COPY README.md ./data
 
 EXPOSE 3000
 
