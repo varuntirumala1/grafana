@@ -49,7 +49,7 @@ ENV PATH="/usr/share/grafana/bin:$PATH" \
 
 WORKDIR $GF_PATHS_HOME
 
-RUN apk add --no-cache ca-certificates bash tzdata openssl musl-utils supervisor curl
+RUN apk add --no-cache ca-certificates bash tzdata openssl musl-utils supervisor curl libc6-compat nano
 
 COPY conf ./conf
 
