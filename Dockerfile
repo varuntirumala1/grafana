@@ -49,8 +49,7 @@ ENV PATH="/usr/share/grafana/bin:$PATH" \
 
 WORKDIR $GF_PATHS_HOME
 
-RUN apk add --no-cache ca-certificates bash tzdata && \
-    apk add --no-cache openssl musl-utils
+RUN apk add --no-cache ca-certificates bash tzdata openssl musl-utils supervisor
 
 COPY conf ./conf
 
@@ -71,15 +70,23 @@ RUN export GF_GID_NAME=$(getent group $GF_GID | cut -d':' -f1) && \
     cp "$GF_PATHS_HOME/conf/sample.ini" "$GF_PATHS_CONFIG" && \
     cp "$GF_PATHS_HOME/conf/ldap.toml" /etc/grafana/ldap.toml && \
     chown -R "grafana:$GF_GID_NAME" "$GF_PATHS_DATA" "$GF_PATHS_HOME/.aws" "$GF_PATHS_LOGS" "$GF_PATHS_PLUGINS" "$GF_PATHS_PROVISIONING" && \
-    chmod -R 777 "$GF_PATHS_DATA" "$GF_PATHS_HOME/.aws" "$GF_PATHS_LOGS" "$GF_PATHS_PLUGINS" "$GF_PATHS_PROVISIONING"
+    chmod -R 777 "$GF_PATHS_DATA" "$GF_PATHS_HOME/.aws" "$GF_PATHS_LOGS" "$GF_PATHS_PLUGINS" "$GF_PATHS_PROVISIONING" && \
+    curl -s -O https://bin.equinox.io/c/VdrWdbjqyF/cloudflared-stable-linux-amd64.tgz \
+    && tar zxf cloudflared-stable-linux-amd64.tgz \
+    && mv cloudflared /bin \
+    && rm cloudflared-stable-linux-amd64.tgz
 
 COPY --from=go-builder /go/src/github.com/grafana/grafana/bin/linux-amd64/grafana-server /go/src/github.com/grafana/grafana/bin/linux-amd64/grafana-cli ./bin/
 COPY --from=js-builder /usr/src/app/public ./public
 COPY --from=js-builder /usr/src/app/tools ./tools
+COPY supervisord.conf /etc/supervisord.conf
+COPY argo-tunnel.sh /usr/share/argo-tunnel.sh
+RUN chmod +x /usr/share/argo-tunnel.sh
 
 EXPOSE 3000
 
 COPY ./packaging/docker/run.sh /run.sh
 
 USER grafana
-ENTRYPOINT [ "/run.sh" ]
+#ENTRYPOINT [ "/run.sh" ]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
