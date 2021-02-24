@@ -1,4 +1,4 @@
-FROM node:14.15.1-alpine3.12 as js-builder
+FROM node:latest as js-builder
 
 WORKDIR /usr/src/app/
 
@@ -16,7 +16,7 @@ COPY emails emails
 ENV NODE_ENV production
 RUN yarn build
 
-FROM golang:1.15.1-alpine3.12 as go-builder
+FROM golang:alpine as go-builder
 
 RUN apk add --no-cache gcc g++
 
@@ -32,7 +32,7 @@ COPY build.go package.json ./
 RUN go run build.go build
 
 # Final stage
-FROM alpine:3.12
+FROM alpine:latest
 
 LABEL maintainer="Grafana team <hello@grafana.com>"
 
