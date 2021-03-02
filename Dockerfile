@@ -32,7 +32,7 @@ COPY build.go package.json ./
 RUN go run build.go build
 
 # Final stage
-FROM varuntirumala1/alpine:latest
+FROM gcr.io/prime-burner-274908/alpine:latest
 COPY /etc/services.d/ /etc/services.d/
 
 ARG GF_UID="472"
