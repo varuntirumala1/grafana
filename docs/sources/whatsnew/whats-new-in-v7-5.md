@@ -50,6 +50,8 @@ When searching for text in Elasticsearch logs, matching words in the log line re
 
 In Grafana 7.5, we changed how data for the trace view is sent from the data source. The required data frame has a clear format, which is more aligned with how data is generally represented in Grafana. This makes it easier for third-party developers to implement data sources leveraging the trace view.
 
+For more information, refer to [trace data API docs]({{< relref "../explore/trace-integration.md#data-api" >}}).
+
 ### Paste in SSL certs for Postgres data source
 
 Previously, when users wanted to configure the Postgres data source to connect with SSL certification, they needed to put the certification on the server, and configure the data source with file path.
@@ -94,7 +96,7 @@ For more information on Grafana Enterprise licensing and restrictions, refer to 
 
 ### Query caching
 
-If you enable this feature, then Grafana hashes and cashes data source queries and serves cached versions of hashed queries if applicable.
+If you enable this feature, then Grafana hashes and caches data source queries and serves cached versions of hashed queries if applicable.
 
 ### Use template variable in reports
 
