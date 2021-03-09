@@ -1,4 +1,5 @@
-FROM node:latest as js-builder
+#FROM node:latest as js-builder
+FROM node:14.15.5-alpine3.13 as js-builder
 
 WORKDIR /usr/src/app/
 
@@ -16,7 +17,8 @@ COPY emails emails
 ENV NODE_ENV production
 RUN yarn build
 
-FROM golang:alpine as go-builder
+#FROM golang:alpine as go-builder
+FROM golang:1.16.0-alpine3.13 as go-builder
 
 RUN apk add --no-cache gcc g++
 
