@@ -4,4 +4,4 @@ steps:
 images: ['gcr.io/$PROJECT_ID/grafana:$_TAG']
 timeout: '3600s'
 options:
-  machineType: 'N2_HIGHCPU_8'
+  machineType: 'E2_HIGHCPU_8'
